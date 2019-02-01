@@ -1,0 +1,48 @@
+#!/bin/sh
+
+#colors: https://askubuntu.com/a/558422
+
+clear
+
+IFS=
+LOADPRE="\033[0;92;100m"
+LOADSYM="\033[0;92;41m"
+HACKFILE=`cat hacks.txt`
+LOADFILE=`cat load.txt`
+
+IFS=
+#RANDOM=`date +"%N"`
+
+while true
+do
+	RANDOM=`dd if=/dev/random count=1 2> /dev/null | cksum | cut -f1 -d" "`
+	#echo $RANDOM
+	IFS=
+	echo -n "$LOADSYM[.]$LOADPRE "
+	PRINTSTR=$(echo -n "${HACKFILE}" | head -$(($RANDOM % (`echo "${HACKFILE}" | wc -l`) + 1)) | tail -1 | tr -d '\n')
+	echo -n $PRINTSTR
+	echo -n " "
+	sleep 0.5
+	tput cub $(($(echo -n $PRINTSTR | wc -m) + 5))
+	tput cuf 3
+	RANDOM=`dd if=/dev/random count=1 2> /dev/null | cksum | cut -f1 -d" "`
+	i1=0
+	while [ $i1 -lt $(($RANDOM % 10)) ]
+	do
+		IFS=
+		#echo $LOADFILE
+		echo $LOADFILE | while read -r line
+		do
+			tput cub 2
+			echo -n "$LOADSYM$line"
+			tput cuf 1
+			#printf $LOADPRE$line
+			sleep 0.05
+		done
+		i1=`expr $i1 + 1`
+	done
+	tput cub 3
+	echo -n "$LOADPRE[=]"
+	#tput cuf 1
+	echo -n "\n"
+done
